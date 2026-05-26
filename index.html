@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portas Mágicas — Lógica Booleana para Crianças</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --c-bg: #FFF8F0;
+    --c-card: #FFFFFF;
+    --c-purple: #7C3AED;
+    --c-purple-light: #EDE9FE;
+    --c-green: #059669;
+    --c-green-light: #D1FAE5;
+    --c-red: #DC2626;
+    --c-red-light: #FEE2E2;
+    --c-orange: #EA580C;
+    --c-orange-light: #FFEDD5;
+    --c-blue: #2563EB;
+    --c-blue-light: #DBEAFE;
+    --c-yellow: #D97706;
+    --c-yellow-light: #FEF3C7;
+    --c-teal: #0D9488;
+    --c-teal-light: #CCFBF1;
+    --c-text: #1C1B1F;
+    --c-muted: #6B7280;
+    --r: 16px;
+    --r-lg: 24px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--c-bg);
+    color: var(--c-text);
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #4C1D95 0%, #7C3AED 50%, #A855F7 100%);
+    text-align: center;
+    padding: 3rem 1.5rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='2' fill='%23ffffff18'/%3E%3C/svg%3E") repeat;
+  }
+  .hero-emoji { font-size: 4.5rem; display: block; margin-bottom: .5rem; animation: bounce 2s infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  .hero h1 {
+    font-family: 'Fredoka One', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    color: #fff;
+    line-height: 1.1;
+    position: relative;
+  }
+  .hero p {
+    color: #DDD6FE;
+    font-size: 1.15rem;
+    margin-top: .75rem;
+    font-weight: 600;
+    position: relative;
+  }
+
+  /* ── NAV TABS ── */
+  .tabs-wrap {
+    background: #fff;
+    border-bottom: 2px solid #EDE9FE;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+  }
+  .tabs {
+    display: flex;
+    gap: 0;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: .9rem 1.1rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: .92rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--c-muted);
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+    white-space: nowrap;
+    margin-bottom: -2px;
+  }
+  .tab-btn.active { color: var(--c-purple); border-bottom-color: var(--c-purple); }
+  .tab-btn:hover:not(.active) { color: var(--c-text); }
+
+  /* ── SECTIONS ── */
+  .section { display: none; max-width: 900px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-family: 'Fredoka One', sans-serif;
+    font-size: 1.7rem;
+    margin-bottom: .5rem;
+  }
+  .section-subtitle { color: var(--c-muted); font-size: 1rem; margin-bottom: 2rem; font-weight: 600; }
+
+  /* ── INTRO CARDS ── */
+  .intro-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .intro-card {
+    background: var(--c-card);
+    border-radius: var(--r-lg);
+    padding: 1.5rem;
+    border: 2px solid #F3F0FF;
+    text-align: center;
+    transition: transform .2s;
+  }
+  .intro-card:hover { transform: translateY(-4px); }
+  .intro-card .ic-emoji { font-size: 2.5rem; margin-bottom: .75rem; display: block; }
+  .intro-card h3 { font-family: 'Fredoka One', sans-serif; font-size: 1.1rem; margin-bottom: .4rem; }
+  .intro-card p { font-size: .88rem; color: var(--c-muted); line-height: 1.5; font-weight: 600; }
+
+  .story-box {
+    background: var(--c-purple-light);
+    border-radius: var(--r-lg);
+    padding: 1.75rem;
+    border-left: 5px solid var(--c-purple);
+  }
+  .story-box h3 { font-family: 'Fredoka One', sans-serif; color: var(--c-purple); font-size: 1.2rem; margin-bottom: .6rem; }
+  .story-box p { line-height: 1.7; font-size: .97rem; font-weight: 600; }
+
+  /* ── GATE CARDS ── */
+  .gate-grid { display: grid; gap: 1.5rem; }
+
+  .gate-card {
+    background: var(--c-card);
+    border-radius: var(--r-lg);
+    padding: 1.75rem;
+    border: 2px solid transparent;
+    transition: border-color .2s;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .gate-card:hover { border-color: #E9D5FF; }
+
+  .gate-info h2 {
+    font-family: 'Fredoka One', sans-serif;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .5rem;
+  }
+  .gate-badge {
+    display: inline-block;
+    font-size: .72rem;
+    font-weight: 800;
+    padding: .2rem .55rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .gate-symbol-container {
+    background: #F3F4F6;
+    padding: .75rem 1.25rem;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: .75rem 0;
+  }
+  .gate-svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+  .gate-info .gate-story {
+    font-size: .92rem;
+    color: var(--c-muted);
+    font-weight: 600;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  /* truth table */
+  .truth-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .88rem;
+    font-weight: 700;
+  }
+  .truth-table th {
+    background: #F3F4F6;
+    padding: .45rem .7rem;
+    text-align: center;
+    font-size: .8rem;
+    color: var(--c-muted);
+    border-radius: 0;
+  }
+  .truth-table td {
+    padding: .45rem .7rem;
+    text-align: center;
+    border-bottom: 1px solid #F3F4F6;
+  }
+  .val-1 { color: var(--c-green); font-weight: 800; }
+  .val-0 { color: var(--c-red); font-weight: 800; }
+
+  /* interactive gate */
+  .gate-interactive { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+  .gate-inputs { display: flex; flex-direction: column; gap: .5rem; width: 100%; max-width: 240px; }
+  .input-row { display: flex; align-items: center; gap: .75rem; font-weight: 700; font-size: .95rem; }
+  .toggle-btn {
+    width: 52px; height: 28px;
+    border-radius: 99px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: background .25s;
+    flex-shrink: 0;
+  }
+  .toggle-btn::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 22px; height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform .25s;
+    box-shadow: 0 1px 4px rgba(0,0,0,.25);
+  }
+  .toggle-btn.on { background: var(--c-green); }
+  .toggle-btn.on::after { transform: translateX(24px); }
+  .toggle-btn.off { background: #CBD5E1; }
+  .input-label { font-size: .85rem; }
+  .input-value { margin-left: auto; font-size: 1rem; }
+
+  .output-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    padding: .9rem 1.5rem;
+    border-radius: var(--r);
+    font-family: 'Fredoka One', sans-serif;
+    font-size: 1.3rem;
+    width: 100%;
+    max-width: 240px;
+    transition: all .3s;
+  }
+  .output-display.on { background: var(--c-green-light); color: var(--c-green); }
+  .output-display.off { background: var(--c-red-light); color: var(--c-red); }
+
+  @media (max-width: 600px) {
+    .gate-card { grid-template-columns: 1fr; }
+  }
+
+  /* ── PLAYGROUND ── */
+  .playground {
+    background: var(--c-card);
+    border-radius: var(--r-lg);
+    padding: 2rem;
+    border: 2px solid #F3F0FF;
+  }
+  .pg-controls { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; align-items: flex-end; justify-content: center; }
+  .pg-controls label { font-weight: 700; font-size: .85rem; color: var(--c-muted); display: block; margin-bottom: .35rem; text-align: center; }
+  .pg-controls select {
+    padding: .55rem 1rem;
+    border-radius: var(--r);
+    border: 2px solid #E5E7EB;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: .95rem;
+    color: var(--c-text);
+    background: #fff;
+    cursor: pointer;
+  }
+  .pg-result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 140px;
+    border-radius: var(--r-lg);
+    font-family: 'Fredoka One', sans-serif;
+    font-size: 1.5rem;
+    gap: 1rem;
+    transition: all .3s;
+    flex-wrap: wrap;
+    padding: 1.5rem;
+  }
+  .pg-result.on { background: var(--c-green-light); color: var(--c-green); }
+  .pg-result.off { background: var(--c-red-light); color: var(--c-red); }
+  .pg-equation { font-size: 1.1rem; font-family: 'Nunito', sans-serif; font-weight: 800; color: var(--c-text); text-align: center; margin-top: 1rem; }
+
+  /* big toggle */
+  .big-toggle {
+    width: 72px; height: 38px;
+    border-radius: 99px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: background .25s;
+    flex-shrink: 0;
+  }
+  .big-toggle::after {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px;
+    width: 30px; height: 30px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform .25s;
+    box-shadow: 0 1px 4px rgba(0,0,0,.25);
+  }
+  .big-toggle.on { background: var(--c-green); }
+  .big-toggle.on::after { transform: translateX(34px); }
+  .big-toggle.off { background: #CBD5E1; }
+
+  .pg-input-row { display: flex; align-items: center; gap: 1rem; }
+  .pg-input-label { font-family: 'Fredoka One', sans-serif; font-size: 1.1rem; }
+  .pg-input-val { font-weight: 800; font-size: 1.1rem; min-width: 24px; }
+
+  /* ── QUIZ ── */
+  .quiz-card {
+    background: var(--c-card);
+    border-radius: var(--r-lg);
+    padding: 2rem;
+    border: 2px solid #F3F0FF;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .quiz-progress { font-size: .85rem; color: var(--c-muted); font-weight: 700; margin-bottom: 1rem; }
+  .progress-bar { height: 8px; background: #F3F0FF; border-radius: 99px; margin-bottom: 1.5rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--c-purple); border-radius: 99px; transition: width .4s; }
+  .quiz-q { font-family: 'Fredoka One', sans-serif; font-size: 1.3rem; margin-bottom: .5rem; }
+  .quiz-hint { font-size: .88rem; color: var(--c-muted); font-weight: 600; margin-bottom: 1.5rem; }
+  .quiz-options { display: grid; gap: .75rem; }
+  .quiz-opt {
+    background: #F9FAFB;
+    border: 2px solid #E5E7EB;
+    border-radius: var(--r);
+    padding: .9rem 1.25rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: .97rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all .2s;
+    color: var(--c-text);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--c-purple); background: var(--c-purple-light); color: var(--c-purple); }
+  .quiz-opt.correct { background: var(--c-green-light); border-color: var(--c-green); color: var(--c-green); }
+  .quiz-opt.wrong { background: var(--c-red-light); border-color: var(--c-red); color: var(--c-red); }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-feedback {
+    margin-top: 1rem;
+    padding: .9rem 1.2rem;
+    border-radius: var(--r);
+    font-weight: 700;
+    font-size: .95rem;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: var(--c-green-light); color: var(--c-green); }
+  .quiz-feedback.wrong { background: var(--c-red-light); color: var(--c-red); }
+  .quiz-next-btn {
+    margin-top: 1.25rem;
+    background: var(--c-purple);
+    color: #fff;
+    border: none;
+    border-radius: var(--r);
+    padding: .8rem 1.75rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    display: none;
+    transition: background .2s;
+  }
+  .quiz-next-btn.show { display: inline-block; }
+  .quiz-next-btn:hover { background: #6D28D9; }
+  .quiz-score {
+    text-align: center;
+    padding: 2rem;
+    display: none;
+  }
+  .quiz-score.show { display: block; }
+  .quiz-score .score-emoji { font-size: 4rem; margin-bottom: 1rem; display: block; }
+  .quiz-score h2 { font-family: 'Fredoka One', sans-serif; font-size: 2rem; margin-bottom: .5rem; }
+  .quiz-score p { font-size: 1rem; color: var(--c-muted); font-weight: 600; }
+  .quiz-restart-btn {
+    margin-top: 1.5rem;
+    background: var(--c-purple);
+    color: #fff;
+    border: none;
+    border-radius: var(--r);
+    padding: .9rem 2rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  /* ── CIRCUIT BUILDER ── */
+  .circuit-builder {
+    background: var(--c-card);
+    border-radius: var(--r-lg);
+    border: 2px solid #F3F0FF;
+    overflow: hidden;
+  }
+  .circuit-toolbar {
+    background: #F9FAFB;
+    padding: .9rem 1.25rem;
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 1px solid #E5E7EB;
+  }
+  .circuit-toolbar span { font-weight: 800; font-size: .85rem; color: var(--c-muted); margin-right: .25rem; }
+  .gate-chip {
+    background: #fff;
+    border: 2px solid #E5E7EB;
+    border-radius: var(--r);
+    padding: .35rem .85rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: .85rem;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .gate-chip:hover { border-color: var(--c-purple); color: var(--c-purple); background: var(--c-purple-light); }
+  .gate-chip.selected { border-color: var(--c-purple); color: var(--c-purple); background: var(--c-purple-light); }
+  .circuit-canvas { display: flex; justify-content: center; padding: 2rem 1rem; min-height: 300px; align-items: center; }
+
+  /* chain display */
+  .chain { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; justify-content: center; }
+  .chain-node {
+    padding: .6rem 1rem;
+    border-radius: var(--r);
+    font-weight: 800;
+    font-size: 1rem;
+    text-align: center;
+  }
+  .chain-node.val-node { background: #F3F4F6; min-width: 52px; font-family: 'Fredoka One', sans-serif; font-size: 1.3rem; cursor: pointer; }
+  .chain-node.val-node.is-1 { background: var(--c-green-light); color: var(--c-green); }
+  .chain-node.val-node.is-0 { background: var(--c-red-light); color: var(--c-red); }
+  .chain-node.gate-node {
+    background: var(--c-purple-light);
+    color: var(--c-purple);
+    font-family: 'Fredoka One', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .4rem .8rem;
+    border: 2px solid transparent;
+  }
+  .chain-node.gate-node:hover {
+    background: #EDE9FE;
+    border-color: var(--c-purple);
+  }
+  .chain-node.gate-node .gate-svg {
+    width: 60px;
+    height: 30px;
+  }
+  .chain-arrow { font-size: 1.4rem; color: #D1D5DB; }
+  .chain-result { background: var(--c-purple); color: #fff; font-family: 'Fredoka One', sans-serif; font-size: 1.6rem; padding: .7rem 1.4rem; border-radius: var(--r-lg); }
+  .chain-result.is-1 { background: var(--c-green); }
+  .chain-result.is-0 { background: var(--c-red); }
+
+  .circuit-hint { text-align: center; color: var(--c-muted); font-size: .88rem; font-weight: 600; padding-bottom: 1.5rem; }
+  .circuit-btns { display: flex; gap: .75rem; padding: 0 1.25rem 1.25rem; flex-wrap: wrap; }
+  .circuit-btns button {
+    background: #F3F4F6;
+    border: none;
+    border-radius: var(--r);
+    padding: .55rem 1.1rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: .88rem;
+    cursor: pointer;
+    transition: all .2s;
+    color: var(--c-text);
+  }
+  .circuit-btns button:hover { background: var(--c-purple-light); color: var(--c-purple); }
+  .circuit-btns .primary { background: var(--c-purple); color: #fff; }
+  .circuit-btns .primary:hover { background: #6D28D9; color: #fff; }
+
+  /* color themes per gate */
+  .theme-and .gate-badge { background: #DBEAFE; color: #1D4ED8; }
+  .theme-or .gate-badge { background: #FEF3C7; color: #92400E; }
+  .theme-not .gate-badge { background: #FCE7F3; color: #9D174D; }
+  .theme-nand .gate-badge { background: #D1FAE5; color: #065F46; }
+  .theme-nor .gate-badge { background: #FEE2E2; color: #991B1B; }
+  .theme-xor .gate-badge { background: #EDE9FE; color: #5B21B6; }
+
+  .tip-box {
+    background: var(--c-yellow-light);
+    border-radius: var(--r-lg);
+    padding: 1.25rem 1.5rem;
+    border-left: 4px solid var(--c-yellow);
+    margin-top: 1.5rem;
+  }
+  .tip-box p { font-size: .9rem; font-weight: 600; line-height: 1.6; }
+  .tip-box strong { color: var(--c-yellow); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="hero-emoji">🔌</span>
+  <h1>Portas Mágicas dos Computadores!</h1>
+  <p>Aprenda lógica booleana de um jeito super divertido ✨</p>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showSection('intro')">🏠 Início</button>
+    <button class="tab-btn" onclick="showSection('portas')">⚡ As Portas</button>
+    <button class="tab-btn" onclick="showSection('playground')">🎮 Brincar</button>
+    <button class="tab-btn" onclick="showSection('construtor')">🏗️ Construtor</button>
+    <button class="tab-btn" onclick="showSection('quiz')">🎯 Quiz</button>
+  </div>
+</div>
+
+<!-- ─────────── INTRO ─────────── -->
+<div class="section active" id="sec-intro">
+  <div class="section-title">🌟 O que são Portas Lógicas?</div>
+  <p class="section-subtitle">Tudo que o computador faz começa aqui — com SIM ou NÃO!</p>
+
+  <div class="intro-grid">
+    <div class="intro-card">
+      <span class="ic-emoji">💡</span>
+      <h3>Ligado ou Desligado</h3>
+      <p>Os computadores só entendem dois valores: <strong>1 (ligado)</strong> e <strong>0 (desligado)</strong>. É como uma lâmpada!</p>
+    </div>
+    <div class="intro-card">
+      <span class="ic-emoji">🚪</span>
+      <h3>Portinhas Mágicas</h3>
+      <p>As portas lógicas são como portinhas que recebem valores e decidem se a saída vai ser <strong>1</strong> ou <strong>0</strong>!</p>
+    </div>
+    <div class="intro-card">
+      <span class="ic-emoji">🧠</span>
+      <h3>O Cérebro do PC</h3>
+      <p>Bilhões de portas juntas formam o <strong>processador</strong> do computador — é como um super-cérebro de lâmpadas!</p>
+    </div>
+    <div class="intro-card">
+      <span class="ic-emoji">🎮</span>
+      <h3>Você Usa Todo Dia</h3>
+      <p>Games, vídeos, mensagens… tudo funciona por causa dessas portinhas trabalhando super rápido!</p>
+    </div>
+  </div>
+
+  <div class="story-box">
+    <h3>🧒 Imagina assim...</h3>
+    <p>Você quer acender a luz do seu quarto. Pra isso, <strong>duas coisas</strong> precisam acontecer: a chave precisa estar ligada E a energia da casa precisa estar ok. Se qualquer uma falhar, a luz não acende! Isso é exatamente o que a porta <strong>E (AND)</strong> faz nos computadores. Faz sentido? 😄</p>
+  </div>
+
+  <div class="tip-box" style="margin-top:1.5rem">
+    <p>💡 <strong>Dica:</strong> Explore as abas acima! Veja cada porta, brinque com os botões interativos, construa circuitos e faça o quiz para testar seus conhecimentos!</p>
+  </div>
+</div>
+
+<!-- ─────────── PORTAS ─────────── -->
+<div class="section" id="sec-portas">
+  <div class="section-title">⚡ As 6 Portas Lógicas</div>
+  <p class="section-subtitle">Clique nos botões para ver cada porta em ação!</p>
+  <div class="gate-grid" id="gate-grid"></div>
+</div>
+
+<!-- ─────────── PLAYGROUND ─────────── -->
+<div class="section" id="sec-playground">
+  <div class="section-title">🎮 Playground Interativo</div>
+  <p class="section-subtitle">Escolha uma porta e teste todas as combinações!</p>
+
+  <div class="playground">
+    <div class="pg-controls">
+      <div>
+        <label>🚪 Porta</label>
+        <select id="pg-gate-sel" onchange="updatePlayground()">
+          <option value="AND">AND — Porta E</option>
+          <option value="OR">OR — Porta OU</option>
+          <option value="NOT">NOT — Porta NÃO (só 1 entrada)</option>
+          <option value="NAND">NAND — Porta NÃO-E</option>
+          <option value="NOR">NOR — Porta NÃO-OU</option>
+          <option value="XOR">XOR — Porta OU-EXCLUSIVO</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Símbolo Dinâmico da Porta Selecionada -->
+    <div style="display:flex; justify-content:center; margin-bottom: 2rem;">
+       <div id="pg-gate-svg-wrap" class="gate-symbol-container" style="background: #FFF; border: 2px solid #EDE9FE; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 1.5rem; border-radius: 20px;"></div>
+    </div>
+
+    <div style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin-bottom:1.5rem" id="pg-inputs">
+      <div class="pg-input-row">
+        <span class="pg-input-label">Entrada A</span>
+        <button class="big-toggle off" id="pg-a" onclick="pgToggle('a')"></button>
+        <span class="pg-input-val val-0" id="pg-a-val">0</span>
+      </div>
+      <div class="pg-input-row" id="pg-b-row">
+        <span class="pg-input-label">Entrada B</span>
+        <button class="big-toggle off" id="pg-b" onclick="pgToggle('b')"></button>
+        <span class="pg-input-val val-0" id="pg-b-val">0</span>
+      </div>
+    </div>
+
+    <div class="pg-result off" id="pg-result">
+      <span id="pg-result-emoji">😴</span>
+      <span id="pg-result-text">Saída: 0</span>
+    </div>
+    <div class="pg-equation" id="pg-equation"></div>
+  </div>
+</div>
+
+<!-- ─────────── CONSTRUTOR ─────────── -->
+<div class="section" id="sec-construtor">
+  <div class="section-title">🏗️ Construtor de Circuitos</div>
+  <p class="section-subtitle">Monte uma cadeia de portas e veja o resultado!</p>
+
+  <div class="circuit-builder">
+    <div class="circuit-toolbar">
+      <span>Adicionar:</span>
+      <button class="gate-chip" onclick="addGate('AND')">AND</button>
+      <button class="gate-chip" onclick="addGate('OR')">OR</button>
+      <button class="gate-chip" onclick="addGate('NOT')">NOT</button>
+      <button class="gate-chip" onclick="addGate('NAND')">NAND</button>
+      <button class="gate-chip" onclick="addGate('NOR')">NOR</button>
+      <button class="gate-chip" onclick="addGate('XOR')">XOR</button>
+    </div>
+
+    <div class="circuit-canvas" id="circuit-canvas">
+      <div style="text-align:center;color:var(--c-muted);font-weight:600;font-size:.95rem">
+        Clique nas portas acima para montar seu circuito! 🚀
+      </div>
+    </div>
+    <div class="circuit-hint" id="circuit-hint" style="display:none">Clique nos valores de entrada (<strong>0</strong> ou <strong>1</strong>) para alternar!</div>
+    <div class="circuit-btns">
+      <button onclick="clearCircuit()">🗑️ Limpar</button>
+      <button onclick="randomCircuit()" class="primary">🎲 Aleatório</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────── QUIZ ─────────── -->
+<div class="section" id="sec-quiz">
+  <div class="section-title">🎯 Quiz das Portas!</div>
+  <p class="section-subtitle">Teste seus conhecimentos em 8 perguntas!</p>
+
+  <div class="quiz-card" id="quiz-card">
+    <div id="quiz-body">
+      <div class="quiz-progress" id="quiz-progress">Pergunta 1 de 8</div>
+      <div class="progress-bar"><div class="progress-fill" id="quiz-bar" style="width:12.5%"></div></div>
+      <div class="quiz-q" id="quiz-q"></div>
+      <div class="quiz-hint" id="quiz-hint"></div>
+      <div class="quiz-options" id="quiz-options"></div>
+      <div class="quiz-feedback" id="quiz-feedback"></div>
+      <button class="quiz-next-btn" id="quiz-next" onclick="nextQuestion()">Próxima →</button>
+    </div>
+    <div class="quiz-score" id="quiz-score">
+      <span class="score-emoji" id="score-emoji">🎉</span>
+      <h2 id="score-title">Incrível!</h2>
+      <p id="score-text"></p>
+      <button class="quiz-restart-btn" onclick="restartQuiz()">🔄 Jogar de Novo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────
+const GATES = [
+  {
+    id: 'AND', name: 'AND', emoji: '🤝', subtitle: 'Porta E',
+    theme: 'theme-and', badge: 'AND',
+    story: 'A porta AND é como dois amigos: os dois precisam dizer SIM para a saída ser SIM! Se qualquer um disser NÃO, o resultado é NÃO.',
+    fn: (a,b)=>a&b, inputs:2,
+    table:[['0','0','0'],['0','1','0'],['1','0','0'],['1','1','1']],
+    example: '🔐 Como um cofre com 2 chaves — precisa das duas!',
+    svg: `<svg viewBox="0 0 100 50" class="gate-svg" width="90" height="45" style="color: #2563EB;"><path d="M20,10 L50,10 A20,20 0 0,1 50,40 L20,40 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><line x1="5" y1="18" x2="20" y2="18" stroke="currentColor" stroke-width="4"/><line x1="5" y1="32" x2="20" y2="32" stroke="currentColor" stroke-width="4"/><line x1="70" y1="25" x2="90" y2="25" stroke="currentColor" stroke-width="4"/></svg>`
+  },
+  {
+    id: 'OR', name: 'OR', emoji: '✋', subtitle: 'Porta OU',
+    theme: 'theme-or', badge: 'OR',
+    story: 'A porta OR é mais generosa: basta UMA das entradas ser SIM para o resultado ser SIM. Só é NÃO quando todos dizem NÃO!',
+    fn: (a,b)=>a|b, inputs:2,
+    table:[['0','0','0'],['0','1','1'],['1','0','1'],['1','1','1']],
+    example: '☕ Como um café de manhã — só precisa de leite OU chocolate para ficar gostoso!',
+    svg: `<svg viewBox="0 0 100 50" class="gate-svg" width="90" height="45" style="color: #EA580C;"><path d="M15,10 Q35,25 15,40 Q50,40 70,25 Q50,10 15,10 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><line x1="0" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="4"/><line x1="0" y1="32" x2="21" y2="32" stroke="currentColor" stroke-width="4"/><line x1="70" y1="25" x2="90" y2="25" stroke="currentColor" stroke-width="4"/></svg>`
+  },
+  {
+    id: 'NOT', name: 'NOT', emoji: '🔄', subtitle: 'Porta NÃO',
+    theme: 'theme-not', badge: 'NOT',
+    story: 'A porta NOT inverte tudo! Se entrar SIM, sai NÃO. Se entrar NÃO, sai SIM. É o contrário sempre! 🙃',
+    fn: (a)=>a^1, inputs:1,
+    table:[['0','1'],['1','0']],
+    example: '🌙 Como ligar a luz: apertar o botão inverte o estado!',
+    svg: `<svg viewBox="0 0 100 50" class="gate-svg" width="90" height="45" style="color: #DB2777;"><polygon points="25,10 65,25 25,40" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="71" cy="25" r="5" fill="none" stroke="currentColor" stroke-width="4"/><line x1="5" y1="25" x2="25" y2="25" stroke="currentColor" stroke-width="4"/><line x1="76" y1="25" x2="95" y2="25" stroke="currentColor" stroke-width="4"/></svg>`
+  },
+  {
+    id: 'NAND', name: 'NAND', emoji: '🚫', subtitle: 'Porta NÃO-E',
+    theme: 'theme-nand', badge: 'NAND',
+    story: 'NAND é o AND ao contrário! A saída é SIM na maioria das vezes — só é NÃO quando os dois dizem SIM ao mesmo tempo.',
+    fn: (a,b)=>(a&b)^1, inputs:2,
+    table:[['0','0','1'],['0','1','1'],['1','0','1'],['1','1','0']],
+    example: '🏆 Muito poderosa — dá pra fazer todas as outras portas com ela!',
+    svg: `<svg viewBox="0 0 100 50" class="gate-svg" width="90" height="45" style="color: #059669;"><path d="M20,10 L50,10 A20,20 0 0,1 50,40 L20,40 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="75" cy="25" r="5" fill="none" stroke="currentColor" stroke-width="4"/><line x1="5" y1="18" x2="20" y2="18" stroke="currentColor" stroke-width="4"/><line x1="5" y1="32" x2="20" y2="32" stroke="currentColor" stroke-width="4"/><line x1="80" y1="25" x2="95" y2="25" stroke="currentColor" stroke-width="4"/></svg>`
+  },
+  {
+    id: 'NOR', name: 'NOR', emoji: '🔇', subtitle: 'Porta NÃO-OU',
+    theme: 'theme-nor', badge: 'NOR',
+    story: 'NOR é o OR ao contrário! A saída só é SIM quando os DOIS dizem NÃO. Qualquer SIM na entrada vira NÃO na saída!',
+    fn: (a,b)=>(a|b)^1, inputs:2,
+    table:[['0','0','1'],['0','1','0'],['1','0','0'],['1','1','0']],
+    example: '🤫 Como um quarto silencioso — qualquer barulho e já era!',
+    svg: `<svg viewBox="0 0 100 50" class="gate-svg" width="90" height="45" style="color: #DC2626;"><path d="M15,10 Q35,25 15,40 Q50,40 70,25 Q50,10 15,10 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="75" cy="25" r="5" fill="none" stroke="currentColor" stroke-width="4"/><line x1="0" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="4"/><line x1="0" y1="32" x2="21" y2="32" stroke="currentColor" stroke-width="4"/><line x1="80" y1="25" x2="95" y2="25" stroke="currentColor" stroke-width="4"/></svg>`
+  },
+  {
+    id: 'XOR', name: 'XOR', emoji: '⚡', subtitle: 'Porta OU-Exclusivo',
+    theme: 'theme-xor', badge: 'XOR',
+    story: 'XOR é especial: a saída é SIM quando as entradas são DIFERENTES! Se forem iguais (00 ou 11), a saída é NÃO.',
+    fn: (a,b)=>a^b, inputs:2,
+    table:[['0','0','0'],['0','1','1'],['1','0','1'],['1','1','0']],
+    example: '🎭 Como "um ou outro, mas não os dois!" — tipo escolher sorvete!',
+    svg: `<svg viewBox="0 0 100 50" class="gate-svg" width="90" height="45" style="color: #7C3AED;"><path d="M8,10 Q28,25 8,40" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M15,10 Q35,25 15,40 Q50,40 70,25 Q50,10 15,10 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><line x1="0" y1="18" x2="11" y2="18" stroke="currentColor" stroke-width="4"/><line x1="0" y1="32" x2="11" y2="32" stroke="currentColor" stroke-width="4"/><line x1="70" y1="25" x2="90" y2="25" stroke="currentColor" stroke-width="4"/></svg>`
+  },
+];
+
+// ── NAVIGATION ──────────────────────────────────
+function showSection(secId) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + secId).classList.add('active');
+  
+  // Encontra e ativa o botão correspondente
+  const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => 
+    b.getAttribute('onclick').includes(secId)
+  );
+  if (activeBtn) activeBtn.classList.add('active');
+}
+
+// ── GATE CARDS ──────────────────────────────────
+function buildGateCards(){
+  const grid=document.getElementById('gate-grid');
+  grid.innerHTML = ''; // Limpa antes de construir
+  GATES.forEach(g=>{
+    let stateA=0, stateB=0;
+    const cardId='gc-'+g.id;
+
+    // table rows
+    const tHead = g.inputs===1
+      ? `<tr><th>A</th><th>Saída</th></tr>`
+      : `<tr><th>A</th><th>B</th><th>Saída</th></tr>`;
+    const tRows = g.table.map(r=>{
+      const cells=r.map((v,i)=>{
+        const cls=v==='1'?'val-1':'val-0';
+        const sym=v==='1'?'✅':'❌';
+        return i===r.length-1
+          ? `<td class="${cls}">${sym} ${v}</td>`
+          : `<td class="${cls}">${v}</td>`;
+      }).join('');
+      return `<tr>${cells}</tr>`;
+    }).join('');
+
+    const bRow=g.inputs>1?`
+      <div class="input-row">
+        <button class="toggle-btn off" id="tog-${g.id}-b" onclick="gateToggle('${g.id}','b')"></button>
+        <span class="input-label">Entrada B</span>
+        <span class="input-value val-0" id="val-${g.id}-b">0</span>
+      </div>`:'';
+
+    const html=`
+    <div class="gate-card ${g.theme}" id="${cardId}">
+      <div class="gate-info">
+        <h2>${g.emoji} ${g.name} <span class="gate-badge">${g.badge}</span></h2>
+        <p style="font-family:'Fredoka One',sans-serif;font-size:1rem;color:var(--c-muted);margin-bottom:.5rem">${g.subtitle}</p>
+        
+        <!-- Símbolo Vetorial Inserido para Identificação Rápida -->
+        <div class="gate-symbol-container">
+          ${g.svg}
+        </div>
+
+        <p class="gate-story">${g.story}</p>
+        <div style="font-size:.82rem;color:var(--c-muted);font-weight:700;margin-top:.5rem">${g.example}</div>
+        <table class="truth-table" style="margin-top:1rem">
+          <thead>${tHead}</thead>
+          <tbody>${tRows}</tbody>
+        </table>
+      </div>
+      <div class="gate-interactive">
+        <div class="gate-inputs">
+          <div class="input-row">
+            <button class="toggle-btn off" id="tog-${g.id}-a" onclick="gateToggle('${g.id}','a')"></button>
+            <span class="input-label">Entrada A</span>
+            <span class="input-value val-0" id="val-${g.id}-a">0</span>
+          </div>
+          ${bRow}
+        </div>
+        <div class="output-display off" id="out-${g.id}">
+          <span id="out-emo-${g.id}">😴</span>
+          <span id="out-txt-${g.id}">Saída: 0</span>
+        </div>
+      </div>
+    </div>`;
+    grid.insertAdjacentHTML('beforeend',html);
+    window['_gs_'+g.id]={a:0,b:0};
+  });
+}
+
+function gateToggle(gid,inp){
+  const st=window['_gs_'+gid];
+  st[inp]^=1;
+  const tog=document.getElementById('tog-'+gid+'-'+inp);
+  const val=document.getElementById('val-'+gid+'-'+inp);
+  if(tog){
+    tog.className='toggle-btn '+(st[inp]?'on':'off');
+    val.className='input-value '+(st[inp]?'val-1':'val-0');
+    val.textContent=st[inp];
+  }
+  const g=GATES.find(x=>x.id===gid);
+  const out=g.inputs===1?g.fn(st.a):g.fn(st.a,st.b);
+  const el=document.getElementById('out-'+gid);
+  el.className='output-display '+(out?'on':'off');
+  document.getElementById('out-emo-'+gid).textContent=out?'💡':'😴';
+  document.getElementById('out-txt-'+gid).textContent='Saída: '+out;
+}
+
+// ── PLAYGROUND ──────────────────────────────────
+let pgA=0,pgB=0;
+function pgToggle(inp){
+  if(inp==='a'){pgA^=1;}else{pgB^=1;}
+  const btn=document.getElementById('pg-'+inp);
+  btn.className='big-toggle '+(inp==='a'?(pgA?'on':'off'):(pgB?'on':'off'));
+  const vEl=document.getElementById('pg-'+inp+'-val');
+  const v=inp==='a'?pgA:pgB;
+  vEl.textContent=v;
+  vEl.className='pg-input-val '+(v?'val-1':'val-0');
+  updatePlayground();
+}
+
+function updatePlayground(){
+  const activeGateId = document.getElementById('pg-gate-sel').value;
+  const g=GATES.find(x=>x.id===activeGateId);
+  
+  // Atualiza o desenho SVG no Playground
+  document.getElementById('pg-gate-svg-wrap').innerHTML = g.svg;
+
+  const bRow=document.getElementById('pg-b-row');
+  if(g.inputs===1){bRow.style.display='none';}else{bRow.style.display='flex';}
+  const out=g.inputs===1?g.fn(pgA):g.fn(pgA,pgB);
+  const res=document.getElementById('pg-result');
+  res.className='pg-result '+(out?'on':'off');
+  document.getElementById('pg-result-emoji').textContent=out?'💡':'😴';
+  document.getElementById('pg-result-text').textContent='Saída: '+out;
+  const eq=g.inputs===1
+    ?`NOT(${pgA}) = ${out}`
+    :`${pgA} ${g.id} ${pgB} = ${out}`;
+  document.getElementById('pg-equation').textContent=eq;
+}
+
+// ── CIRCUIT BUILDER ──────────────────────────────
+let circuit=[]; 
+
+function addGate(type){
+  const g=GATES.find(x=>x.id===type);
+  const inputs=g.inputs===1?[0]:[0,0];
+  circuit.push({type,inputs});
+  renderCircuit();
+}
+
+function clearCircuit(){circuit=[];renderCircuit();}
+
+function randomCircuit(){
+  circuit=[];
+  const types=['AND','OR','NOT','NAND','NOR','XOR'];
+  const n=2+Math.floor(Math.random()*3);
+  for(let i=0;i<n;i++){
+    const t=types[Math.floor(Math.random()*types.length)];
+    const g=GATES.find(x=>x.id===t);
+    circuit.push({
+      type:t,
+      inputs:g.inputs===1?[Math.round(Math.random())]:[Math.round(Math.random()),Math.round(Math.random())]
+    });
+  }
+  renderCircuit();
+}
+
+function toggleCircuitInput(gIdx,iIdx){
+  circuit[gIdx].inputs[iIdx]^=1;
+  renderCircuit();
+}
+
+function removeGate(idx){
+  circuit.splice(idx,1);
+  if(circuit.length > 0) {
+    const g = GATES.find(x => x.id === circuit[0].type);
+    if(g.inputs === 2 && circuit[0].inputs.length < 2) {
+      circuit[0].inputs.push(0);
+    }
+  }
+  renderCircuit();
+}
+
+function evalCircuit(){
+  if(!circuit.length)return null;
+  let val=null;
+  circuit.forEach((node,gi)=>{
+    const g=GATES.find(x=>x.id===node.type);
+    if(gi===0){
+      val=g.inputs===1?g.fn(node.inputs[0]):g.fn(node.inputs[0],node.inputs[1]);
+    }else{
+      if(g.inputs===1){val=g.fn(val);}
+      else{val=g.fn(val,node.inputs[1]);}
+    }
+  });
+  return val;
+}
+
+function renderCircuit(){
+  const canvas=document.getElementById('circuit-canvas');
+  const hint=document.getElementById('circuit-hint');
+  if(!circuit.length){
+    canvas.innerHTML=`<div style="text-align:center;color:var(--c-muted);font-weight:600;font-size:.95rem">Clique nas portas acima para montar seu circuito! 🚀</div>`;
+    hint.style.display='none';
+    return;
+  }
+  hint.style.display='block';
+  const result=evalCircuit();
+
+  let html=`<div class="chain">`;
+
+  circuit.forEach((node,gi)=>{
+    const g=GATES.find(x=>x.id===node.type);
+    if(gi===0){
+      node.inputs.forEach((v,ii)=>{
+        html+=`<div class="chain-node val-node ${v?'is-1':'is-0'}" onclick="toggleCircuitInput(${gi},${ii})" title="Clique para alternar">${v}</div>`;
+        if(ii<node.inputs.length-1) html+=`<span style="font-size:.8rem;color:var(--c-muted)">e</span>`;
+      });
+    }else{
+      if(g.inputs===2){
+        const v=node.inputs[1];
+        html+=`<span style="font-size:.8rem;color:var(--c-muted)">e</span>`;
+        html+=`<div class="chain-node val-node ${v?'is-1':'is-0'}" onclick="toggleCircuitInput(${gi},1)" title="Clique para alternar">${v}</div>`;
+      }
+    }
+
+    html+=`<span class="chain-arrow">➡️</span>`;
+    // Mostra o desenho técnico da porta no construtor de circuito!
+    html+=`<div class="chain-node gate-node" onclick="removeGate(${gi})" title="Clique para remover">${g.svg}</div>`;
+  });
+
+  html+=`<span class="chain-arrow">➡️</span>`;
+  html+=`<div class="chain-result ${result?'is-1':'is-0'}">${result}</div>`;
+  html+=`</div>`;
+
+  canvas.innerHTML=html;
+}
+
+// ── QUIZ SYSTEM ──────────────────────────────────
+const QUIZ_QUESTIONS = [
+  {
+    q: "Se a Entrada A for 1 e a Entrada B for 1, qual o resultado da porta AND?",
+    hint: "AND precisa que AMBOS sejam 1 para dar 1!",
+    opts: ["0 (Desligado)", "1 (Ligado)"],
+    correct: 1,
+    feedback: "Correto! Ambos são 1, então AND resulta em 1."
+  },
+  {
+    q: "A porta NOT recebe a entrada 0. Qual será a saída?",
+    hint: "NOT é a porta que inverte tudo!",
+    opts: ["0 (Desligado)", "1 (Ligado)"],
+    correct: 1,
+    feedback: "Isso mesmo! O inverso de 0 é 1."
+  },
+  {
+    q: "Se uma entrada for 1 e a outra for 0, o que a porta OR resulta?",
+    hint: "OR só precisa de pelo menos UMA entrada ligada.",
+    opts: ["0 (Desligado)", "1 (Ligado)"],
+    correct: 1,
+    feedback: "Excelente! Pelo menos uma entrada é 1, então a saída é 1."
+  },
+  {
+    q: "Na porta XOR, se ambas as entradas forem iguais a 1 (1 e 1), qual o resultado?",
+    hint: "XOR quer dizer OU-Exclusivo: as entradas devem ser DIFERENTES!",
+    opts: ["0 (Desligado)", "1 (Ligado)"],
+    correct: 0,
+    feedback: "Perfeito! Entradas iguais dão 0 na porta XOR."
+  },
+  {
+    q: "Qual porta é o oposto exato da porta AND?",
+    hint: "Ela junta NOT + AND.",
+    opts: ["NOR", "NAND", "XOR"],
+    correct: 1,
+    feedback: "Muito bem! NAND é o oposto da porta AND."
+  },
+  {
+    q: "Se as duas entradas forem 0, qual dessas portas dará saída 1?",
+    hint: "Pense em uma porta que dá 1 quando tudo é 0 (o oposto de OR).",
+    opts: ["AND", "OR", "NOR"],
+    correct: 2,
+    feedback: "Certinho! NOR (NOT-OR) inverte o 0 da porta OR para 1!"
+  },
+  {
+    q: "Em qual porta a saída só será 1 se as entradas forem DIFERENTES?",
+    hint: "A porta do sorvete: um ou outro, mas não ambos!",
+    opts: ["OR", "XOR", "AND"],
+    correct: 1,
+    feedback: "Incrível! XOR (OU-Exclusivo) dá 1 para entradas diferentes."
+  },
+  {
+    q: "Se passarmos um sinal por uma porta NOT e depois por outra porta NOT, qual o resultado final?",
+    hint: "Inverter duas vezes traz de volta ao original!",
+    opts: ["Inverte de novo (volta ao sinal original)", "Fica sempre 0", "Fica sempre 1"],
+    correct: 0,
+    feedback: "Exatamente! Inversão dupla cancela a si mesma!"
+  }
+];
+
+let quizIdx = 0;
+let quizScore = 0;
+
+function startQuiz() {
+  quizIdx = 0;
+  quizScore = 0;
+  document.getElementById('quiz-body').style.display = 'block';
+  document.getElementById('quiz-score').style.display = 'none';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = QUIZ_QUESTIONS[quizIdx];
+  document.getElementById('quiz-progress').textContent = `Pergunta ${quizIdx + 1} de ${QUIZ_QUESTIONS.length}`;
+  document.getElementById('quiz-bar').style.width = `${((quizIdx + 1) / QUIZ_QUESTIONS.length) * 100}%`;
+  document.getElementById('quiz-q').textContent = q.q;
+  document.getElementById('quiz-hint').textContent = `💡 Dica: ${q.hint}`;
+
+  const optsDiv = document.getElementById('quiz-options');
+  optsDiv.innerHTML = '';
+  q.opts.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = opt;
+    btn.onclick = () => selectOption(idx);
+    optsDiv.appendChild(btn);
+  });
+
+  const fb = document.getElementById('quiz-feedback');
+  fb.className = 'quiz-feedback';
+  fb.style.display = 'none';
+
+  document.getElementById('quiz-next').style.display = 'none';
+}
+
+function selectOption(idx) {
+  const q = QUIZ_QUESTIONS[quizIdx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(btn => btn.disabled = true);
+
+  const fb = document.getElementById('quiz-feedback');
+  fb.style.display = 'block';
+
+  if (idx === q.correct) {
+    quizScore++;
+    opts[idx].classList.add('correct');
+    fb.className = 'quiz-feedback correct show';
+    fb.textContent = `🎉 ${q.feedback}`;
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+    fb.className = 'quiz-feedback wrong show';
+    fb.textContent = `Ops! A resposta certa era: ${q.opts[q.correct]}. ${q.hint}`;
+  }
+
+  document.getElementById('quiz-next').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  quizIdx++;
+  if (quizIdx < QUIZ_QUESTIONS.length) {
+    showQuestion();
+  } else {
+    showScore();
+  }
+}
+
+function showScore() {
+  document.getElementById('quiz-body').style.display = 'none';
+  const scoreDiv = document.getElementById('quiz-score');
+  scoreDiv.style.display = 'block';
+
+  const pct = (quizScore / QUIZ_QUESTIONS.length) * 100;
+  let emo = "🏆";
+  let title = "Gênio dos Circuitos!";
+  if (pct < 50) {
+    emo = "🔋";
+    title = "Continue Praticando!";
+  } else if (pct < 85) {
+    emo = "⚡";
+    title = "Muito Bem!";
+  }
+
+  document.getElementById('score-emoji').textContent = emo;
+  document.getElementById('score-title').textContent = title;
+  document.getElementById('score-text').textContent = `Você acertou ${quizScore} de ${QUIZ_QUESTIONS.length} perguntas (${pct}%).`;
+}
+
+function restartQuiz() {
+  startQuiz();
+}
+
+// ── INITIALIZATION ────────────────────────────────
+window.onload = function() {
+  buildGateCards();
+  updatePlayground();
+  startQuiz();
+};
+</script>
+</body>
+</html>
